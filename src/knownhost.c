@@ -51,7 +51,9 @@ struct known_host {
     char *key;       /* the (allocated) associated key. This is kept base64
                         encoded in memory. */
     char *key_type_name; /* the (allocated) key type name */
-    char *comment;   /* the (allocated) optional comment text, may be NULL */
+    size_t key_type_len; /* size of key_type_name */
+    char *comment;       /* the (allocated) optional comment text, may be NULL */
+    size_t comment_len;  /* the size of comment */
 
     /* this is the struct we expose externally */
     struct libssh2_knownhost external;
@@ -165,6 +167,7 @@ knownhost_add(LIBSSH2_KNOWNHOSTS *hosts,
             goto error;
         }
         memcpy(entry->name, host, hostlen+1);
+        entry->name_len = hostlen;
         break;
     case LIBSSH2_KNOWNHOST_TYPE_SHA1:
         rc = libssh2_base64_decode(hosts->session, &ptr, &ptrlen,
@@ -223,6 +226,7 @@ knownhost_add(LIBSSH2_KNOWNHOSTS *hosts,
         }
         memcpy(entry->key_type_name, key_type_name, key_type_len);
         entry->key_type_name[key_type_len]=0;
+        entry->key_type_len = key_type_len;
     }
 
     if (comment) {
@@ -234,6 +238,7 @@ knownhost_add(LIBSSH2_KNOWNHOSTS *hosts,
         }
         memcpy(entry->comment, comment, commentlen+1);
         entry->comment[commentlen]=0; /* force a terminating zero trailer */
+        entry->comment_len = commentlen;
     }
     else {
         entry->comment = NULL;
@@ -999,25 +1004,28 @@ knownhost_writeline(LIBSSH2_KNOWNHOSTS *hosts,
     switch(node->typemask & LIBSSH2_KNOWNHOST_KEY_MASK) {
     case LIBSSH2_KNOWNHOST_KEY_RSA1:
         key_type_name = NULL;
+        key_type_len = 0;
         break;
     case LIBSSH2_KNOWNHOST_KEY_SSHRSA:
         key_type_name = "ssh-rsa";
+        key_type_len = 7;
         break;
     case LIBSSH2_KNOWNHOST_KEY_SSHDSS:
         key_type_name = "ssh-dss";
+        key_type_len = 7;
         break;
     case LIBSSH2_KNOWNHOST_KEY_UNKNOWN:
         key_type_name = node->key_type_name;
-        if (key_type_name) break;
+        if (key_type_name) {
+            key_type_len = node->key_type_len;
+            break;
+        }
         /* otherwise fallback to default and error */
     default:
         return _libssh2_error(hosts->session,
                               LIBSSH2_ERROR_METHOD_NOT_SUPPORTED,
                               "Unsupported type of known-host entry");
     }
-
-    key_type_len = (key_type_name ? strlen(key_type_name) + 1 : 0);
-        
 
     /* calculate extra space needed for comment */
     if(node->comment)
@@ -1044,30 +1052,49 @@ knownhost_writeline(LIBSSH2_KNOWNHOSTS *hosts,
             LIBSSH2_FREE(hosts->session, saltalloc);
 
         if (rc != LIBSSH2_ERROR_NONE) return rc;
-    }
-    else
-        offset = snprintf(buf, buflen, "%s", node->name);
-
-    if (offset >= buflen) goto buffer_to_small;
-    
-    if (key_type_name) {
-        offset += snprintf(buf + offset, buflen - offset,
-                           " %s", key_type_name);
+        
         if (offset >= buflen) goto buffer_to_small;
     }
+    else {
+        if (buflen > node->name_len) {
+            memcpy(buf, node->name, node->name_len);
+            offset = node->name_len;
+        }
+        else
+            goto buffer_to_small;
+    }
+    
+    if (key_type_name) {
+        buf[offset++] = ' ';
+        if (buflen - offset > key_type_len) {
+            memcpy(buf + offset, key_type_name, key_type_len);
+            offset += key_type_len;
+        }
+        else 
+            goto buffer_to_small;
+    }
+
 
     offset += snprintf(buf + offset, buflen - offset,
                        " %s", node->key);
     if (offset >= buflen) goto buffer_to_small;
 
-    if (node->comment)
-        offset += snprintf(buf + offset, buflen - offset,
-                           " %s\n", node->comment);
-    else
-        offset += snprintf(buf + offset, buflen - offset, "\n");
-    
-    if (offset >= buflen) goto buffer_to_small;
+    if (node->comment) {
+        buf[offset++] = ' ';
+        if (buflen - offset > node->comment_len) {
+            memcpy(buf + offset, node->comment, node->comment_len);
+            offset += node->comment_len;
+        }
+        else 
+            goto buffer_to_small;
+    }
 
+    if (buflen - offset > 1) {
+        buf[offset++] = '\n';
+    }
+    else goto buffer_to_small;
+
+    buf[offset] = '\0';
     *outlen = offset;
     return LIBSSH2_ERROR_NONE;
 

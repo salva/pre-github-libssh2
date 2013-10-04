@@ -1053,46 +1053,35 @@ knownhost_writeline(LIBSSH2_KNOWNHOSTS *hosts,
 
         if (rc != LIBSSH2_ERROR_NONE) return rc;
         
-        if (offset >= buflen) goto buffer_too_small;
+        if (buflen <= offset) goto buffer_too_small;
     }
     else {
-        if (buflen > node->name_len) {
-            memcpy(buf, node->name, node->name_len);
-            offset = node->name_len;
-        }
-        else
-            goto buffer_too_small;
+        if (buflen <= node->name_len) goto buffer_too_small;
+        memcpy(buf, node->name, node->name_len);
+        offset = node->name_len;
     }
     
     if (key_type_name) {
         buf[offset++] = ' ';
-        if (buflen - offset > key_type_len) {
-            memcpy(buf + offset, key_type_name, key_type_len);
-            offset += key_type_len;
-        }
-        else 
-            goto buffer_too_small;
+        if (buflen - offset <= key_type_len) goto buffer_too_small;
+        memcpy(buf + offset, key_type_name, key_type_len);
+        offset += key_type_len;
     }
 
 
     offset += snprintf(buf + offset, buflen - offset,
                        " %s", node->key);
-    if (offset >= buflen) goto buffer_too_small;
-
+    if (buflen <= offset) goto buffer_too_small;
+    
     if (node->comment) {
         buf[offset++] = ' ';
-        if (buflen - offset > node->comment_len) {
-            memcpy(buf + offset, node->comment, node->comment_len);
-            offset += node->comment_len;
-        }
-        else 
-            goto buffer_too_small;
+        if (buflen - offset <= node->comment_len) goto buffer_too_small;
+        memcpy(buf + offset, node->comment, node->comment_len);
+        offset += node->comment_len;
     }
 
-    if (buflen - offset > 1) {
-        buf[offset++] = '\n';
-    }
-    else goto buffer_too_small;
+    if (buflen - offset <= 1) goto buffer_too_small;
+    buf[offset++] = '\n';
 
     buf[offset] = '\0';
     *outlen = offset;

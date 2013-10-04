@@ -1053,7 +1053,7 @@ knownhost_writeline(LIBSSH2_KNOWNHOSTS *hosts,
 
         if (rc != LIBSSH2_ERROR_NONE) return rc;
         
-        if (offset >= buflen) goto buffer_to_small;
+        if (offset >= buflen) goto buffer_too_small;
     }
     else {
         if (buflen > node->name_len) {
@@ -1061,7 +1061,7 @@ knownhost_writeline(LIBSSH2_KNOWNHOSTS *hosts,
             offset = node->name_len;
         }
         else
-            goto buffer_to_small;
+            goto buffer_too_small;
     }
     
     if (key_type_name) {
@@ -1071,13 +1071,13 @@ knownhost_writeline(LIBSSH2_KNOWNHOSTS *hosts,
             offset += key_type_len;
         }
         else 
-            goto buffer_to_small;
+            goto buffer_too_small;
     }
 
 
     offset += snprintf(buf + offset, buflen - offset,
                        " %s", node->key);
-    if (offset >= buflen) goto buffer_to_small;
+    if (offset >= buflen) goto buffer_too_small;
 
     if (node->comment) {
         buf[offset++] = ' ';
@@ -1086,19 +1086,19 @@ knownhost_writeline(LIBSSH2_KNOWNHOSTS *hosts,
             offset += node->comment_len;
         }
         else 
-            goto buffer_to_small;
+            goto buffer_too_small;
     }
 
     if (buflen - offset > 1) {
         buf[offset++] = '\n';
     }
-    else goto buffer_to_small;
+    else goto buffer_too_small;
 
     buf[offset] = '\0';
     *outlen = offset;
     return LIBSSH2_ERROR_NONE;
 
-  buffer_to_small:
+  buffer_too_small:
     return _libssh2_error(hosts->session, LIBSSH2_ERROR_BUFFER_TOO_SMALL,
                           "Known-host write buffer too small");
 }

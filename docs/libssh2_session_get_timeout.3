@@ -5,7 +5,12 @@ libssh2_session_get_timeout - get the timeout for blocking functions
 #include <libssh2.h>
 .nf
 long libssh2_session_get_timeout(LIBSSH2_SESSION *session);
+
 .SH DESCRIPTION
+
+This function is deprecated. Use the
+\fIlibssh2_session_config_get(3)\fP function instead!
+
 Returns the \fBtimeout\fP (in milliseconds) for how long a blocking the
 libssh2 function calls may wait until they consider the situation an error and
 return LIBSSH2_ERROR_TIMEOUT.

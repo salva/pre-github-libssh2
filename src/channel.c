@@ -1360,7 +1360,9 @@ LIBSSH2_API void
 libssh2_channel_set_blocking(LIBSSH2_CHANNEL * channel, int blocking)
 {
     if(channel)
-        (void) _libssh2_session_set_blocking(channel->session, blocking);
+        (void) libssh2_session_config_set(channel->session,
+                                          LIBSSH2_SESSION_CONFIG_BLOCKING,
+                                          blocking);
 }
 
 /*

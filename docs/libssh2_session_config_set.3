@@ -1,0 +1,65 @@
+.TH libssh2_session_config_set 3 "21 Oct 2013" "libssh2 1.4.4" "libssh2 manual"
+.SH NAME
+libssh2_session_config_set - set configurable session parameters
+.SH SYNOPSIS
+#include <libssh2.h>
+
+unsigned long
+libssh2_session_config_set(LIBSSH2_SESSION *session, int key, unsigned long value);
+
+.SH DESCRIPTION
+This function allows one to set the session configurable
+parameters. \fIkey\fP is the parameter to set, and \fIvalue\fP is its
+new value.
+
+.SH KEYS
+The parameters that can be currently set are as follows:
+
+.IP LIBSSH2_SESSION_CONFIG_BLOCKING
+Sets or clears the session blocking mode. This will instantly affect any
+channels associated with this session.
+
+If a read is performed on a session with no data currently available,
+a blocking session will wait for data to arrive and return what it
+receives. A non-blocking session will return immediately with an empty
+buffer.
+
+If a write is performed on a session with no room for more data, a
+blocking session will wait for room.  A non-blocking session will
+return immediately without writing anything.
+
+.IP LIBSSH2_SESSION_CONFIG_SIGPIPE
+If set to a true value, libssh2 will not attempt to block SIGPIPEs but
+will let them trigger from the underlying socket layer.
+
+.IP LIBSSH2_SESSION_CONFIG_COMPRESS
+If set to a true value before the connection handshake is performed,
+libssh2 will try to use compression for the session negotiating it
+with the server.
+
+libssh2 does not attempt to use compression by default.
+
+.IP LIBSSH2_SESSION_TIMEOUT
+Sets the session timeout in miliseconds. The timeout repressents for
+how long a blocking libssh2 function call may wait before failing with
+a LIBSSH2_ERROR_TIMEOUT error.
+
+.IP LIBSSH2_SESSION_CHANNEL_WINDOW_SIZE
+Sets the window size in bytes used for new created channels. The
+default value is 2MB.
+
+.IP LIBSSH2_SESSION_CHANNEL_PACKET_SIZE
+Sets the maximum packet size in bytes for new created channels. The
+default value is 32KB.
+
+.SH RETURN VALUE
+Returns the value the parameter had previously.
+
+.SH AVAILABILITY
+This function has been available since version 1.4.4.
+
+.SH SEE ALSO
+.BR libssh2_session_config_get(3) ,
+.BR libssh2_session_flag(3) ,
+.BR libssh2_session_set_blocking(3) ,
+.BR libssh2_session_set_timeout(3) .

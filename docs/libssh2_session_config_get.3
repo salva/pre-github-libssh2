@@ -1,0 +1,27 @@
+.TH libssh2_session_config_get 3 "21 Oct 2013" "libssh2 1.4.4" "libssh2 manual"
+.SH NAME
+libssh2_session_config_get - get configurable session parameters
+.SH SYNOPSIS
+#include <libssh2.h>
+
+unsigned long
+libssh2_session_config_get(LIBSSH2_SESSION *session, int key);
+
+.SH DESCRIPTION
+This function returns the current value for the configurable parameter
+given by \fIkey\fP.
+
+See
+.BR libssh2_session_config_set(3)
+for the list of available parameters.
+
+.SH RETURN VALUE
+Returns the value of the given parameter.
+
+.SH AVAILABILITY
+This function has been available since version 1.4.4.
+
+.SH SEE ALSO
+
+.BR libssh2_session_config_set(3)
+

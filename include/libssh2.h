@@ -267,9 +267,17 @@ typedef struct _LIBSSH2_USERAUTH_KBDINT_RESPONSE
 #define LIBSSH2_METHOD_LANG_CS      8
 #define LIBSSH2_METHOD_LANG_SC      9
 
-/* flags */
-#define LIBSSH2_FLAG_SIGPIPE        1
-#define LIBSSH2_FLAG_COMPRESS       2
+/* configurable keys */
+#define LIBSSH2_SESSION_CONFIG_SIGPIPE      1
+#define LIBSSH2_SESSION_CONFIG_COMPRESS     2
+#define LIBSSH2_SESSION_CONFIG_CHANNEL_WINDOW_SIZE 3
+#define LIBSSH2_SESSION_CONFIG_CHANNEL_PACKET_SIZE 4
+#define LIBSSH2_SESSION_CONFIG_TIMEOUT      5
+#define LIBSSH2_SESSION_CONFIG_BLOCKING     6
+
+/* flags, obsolete */
+#define LIBSSH2_FLAG_SIGPIPE        LIBSSH2_SESSION_CONFIG_SIGPIPE
+#define LIBSSH2_FLAG_COMPRESS       LIBSSH2_SESSION_CONFIG_COMPRESS
 
 typedef struct _LIBSSH2_SESSION                     LIBSSH2_SESSION;
 typedef struct _LIBSSH2_CHANNEL                     LIBSSH2_CHANNEL;
@@ -503,8 +511,6 @@ LIBSSH2_API int libssh2_session_last_error(LIBSSH2_SESSION *session,
 LIBSSH2_API int libssh2_session_last_errno(LIBSSH2_SESSION *session);
 LIBSSH2_API int libssh2_session_block_directions(LIBSSH2_SESSION *session);
 
-LIBSSH2_API int libssh2_session_flag(LIBSSH2_SESSION *session, int flag,
-                                     int value);
 LIBSSH2_API const char *libssh2_session_banner_get(LIBSSH2_SESSION *session);
 
 /* Userauth API */
@@ -738,16 +744,29 @@ libssh2_channel_window_write_ex(LIBSSH2_CHANNEL *channel,
 #define libssh2_channel_window_write(channel) \
   libssh2_channel_window_write_ex((channel), NULL)
 
-LIBSSH2_API void libssh2_session_set_blocking(LIBSSH2_SESSION* session,
-                                              int blocking);
-LIBSSH2_API int libssh2_session_get_blocking(LIBSSH2_SESSION* session);
+LIBSSH2_API unsigned long libssh2_session_config_set(LIBSSH2_SESSION *session,
+                                                     int key, unsigned long value);
+
+LIBSSH2_API unsigned long libssh2_session_config_get(LIBSSH2_SESSION *session,
+                                                     int key);
+
+#define libssh2_session_set_blocking(session, blocking) \
+  libssh2_session_config_set((session), LIBSSH2_SESSION_CONFIG_BLOCKING, (blocking))
+
+#define libssh2_session_get_blocking(session) \
+  libssh2_session_config_get((session), LIBSSH2_SESSION_CONFIG_BLOCKING)
+
+#define libssh2_session_set_timeout(session, timeout) \
+  libssh2_session_config_set((session), LIBSSH2_SESSION_CONFIG_TIMEOUT, (timeout))
+
+#define libssh2_session_get_timeout(session) \
+  libssh2_session_config_get((session), LIBSSH2_SESSION_CONFIG_TIMEOUT)
+
+#define libssh2_session_flag(session, flag, value) \
+  (libssh2_session_config_set((session), (flag), (value)), 1)
 
 LIBSSH2_API void libssh2_channel_set_blocking(LIBSSH2_CHANNEL *channel,
                                               int blocking);
-
-LIBSSH2_API void libssh2_session_set_timeout(LIBSSH2_SESSION* session,
-                                             long timeout);
-LIBSSH2_API long libssh2_session_get_timeout(LIBSSH2_SESSION* session);
 
 /* libssh2_channel_handle_extended_data is DEPRECATED, do not use! */
 LIBSSH2_API void libssh2_channel_handle_extended_data(LIBSSH2_CHANNEL *channel,

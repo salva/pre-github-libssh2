@@ -1269,88 +1269,83 @@ libssh2_session_last_errno(LIBSSH2_SESSION * session)
     return session->err_code;
 }
 
-/* libssh2_session_flag
+/* libssh2_session_config_set 
  *
- * Set/Get session flags
- *
- * Return error code.
+ * Sets the configurable value for the given session setting. Returns
+ * the previous value.
  */
-LIBSSH2_API int
-libssh2_session_flag(LIBSSH2_SESSION * session, int flag, int value)
+
+LIBSSH2_API unsigned long
+libssh2_session_config_set(LIBSSH2_SESSION *session, int key, unsigned long value)
 {
-    switch(flag) {
-    case LIBSSH2_FLAG_SIGPIPE:
-        session->flag.sigpipe = value;
+    unsigned int old = 0;
+    switch (key) {
+    case LIBSSH2_SESSION_CONFIG_BLOCKING:
+        old = session->api_block_mode;
+        session->api_block_mode = (value ? 1: 0);
+        _libssh2_debug(session, LIBSSH2_TRACE_CONN,
+                       "Setting blocking mode %s, was %s",
+                       (value ? "ON" : "OFF"),
+                       (old ? "ON" : "OFF") );
         break;
-    case LIBSSH2_FLAG_COMPRESS:
-        session->flag.compress = value;
+    case LIBSSH2_SESSION_CONFIG_SIGPIPE:
+        old = session->flag.sigpipe;
+        session->flag.sigpipe = (value ? 1 : 0);
+        break;
+    case LIBSSH2_SESSION_CONFIG_COMPRESS:
+        old = session->flag.compress;
+        session->flag.compress = (value ? 1 : 0);
+        break;
+    case LIBSSH2_SESSION_CONFIG_CHANNEL_WINDOW_SIZE:
+        old = session->channel_window_size;
+        session->channel_window_size = value;
+        break;
+    case LIBSSH2_SESSION_CONFIG_CHANNEL_PACKET_SIZE:
+        old = session->channel_packet_size;
+        session->channel_packet_size = value;
+        break;
+    case LIBSSH2_SESSION_CONFIG_TIMEOUT:
+        old = session->api_timeout;
+        session->api_timeout = value;
         break;
     default:
-        /* unknown flag */
-        return LIBSSH2_ERROR_INVAL;
+        old = 0;
+        _libssh2_debug(session, LIBSSH2_TRACE_CONN,
+                       "Error, can't set config, unknown setting %d, value %lu",
+                       key, value);
     }
-
-    return LIBSSH2_ERROR_NONE;
+    return old;
 }
 
-/* _libssh2_session_set_blocking
- *
- * Set a session's blocking mode on or off, return the previous status when
- * this function is called. Note this function does not alter the state of the
- * actual socket involved.
+/* libssh2_session_config_get
+ * 
+ * Returns the current value for the given session configurable
+ * setting
  */
-int
-_libssh2_session_set_blocking(LIBSSH2_SESSION *session, int blocking)
+
+LIBSSH2_API unsigned long
+libssh2_session_config_get(LIBSSH2_SESSION *session, int key)
 {
-    int bl = session->api_block_mode;
-    _libssh2_debug(session, LIBSSH2_TRACE_CONN,
-                   "Setting blocking mode %s", blocking?"ON":"OFF");
-    session->api_block_mode = blocking;
-
-    return bl;
-}
-
-/* libssh2_session_set_blocking
- *
- * Set a channel's blocking mode on or off, similar to a socket's
- * fcntl(fd, F_SETFL, O_NONBLOCK); type command
- */
-LIBSSH2_API void
-libssh2_session_set_blocking(LIBSSH2_SESSION * session, int blocking)
-{
-    (void) _libssh2_session_set_blocking(session, blocking);
-}
-
-/* libssh2_session_get_blocking
- *
- * Returns a session's blocking mode on or off
- */
-LIBSSH2_API int
-libssh2_session_get_blocking(LIBSSH2_SESSION * session)
-{
-    return session->api_block_mode;
-}
-
-
-/* libssh2_session_set_timeout
- *
- * Set a session's timeout (in msec) for blocking mode,
- * or 0 to disable timeouts.
- */
-LIBSSH2_API void
-libssh2_session_set_timeout(LIBSSH2_SESSION * session, long timeout)
-{
-    session->api_timeout = timeout;
-}
-
-/* libssh2_session_get_timeout
- *
- * Returns a session's timeout, or 0 if disabled
- */
-LIBSSH2_API long
-libssh2_session_get_timeout(LIBSSH2_SESSION * session)
-{
-    return session->api_timeout;
+    unsigned int old = 0;
+    switch (key) {
+    case LIBSSH2_SESSION_CONFIG_BLOCKING:
+        return session->api_block_mode;
+    case LIBSSH2_SESSION_CONFIG_SIGPIPE:
+        return session->flag.sigpipe;
+    case LIBSSH2_SESSION_CONFIG_COMPRESS:
+        return session->flag.compress;
+    case LIBSSH2_SESSION_CONFIG_CHANNEL_WINDOW_SIZE:
+        return session->channel_window_size;
+    case LIBSSH2_SESSION_CONFIG_CHANNEL_PACKET_SIZE:
+        return session->channel_packet_size;
+    case LIBSSH2_SESSION_CONFIG_TIMEOUT:
+        return session->api_timeout;
+    default:
+        _libssh2_debug(session, LIBSSH2_TRACE_CONN,
+                       "Error, can't get config, unknown setting %d",
+                       key);
+        return 0;
+    }
 }
 
 /*

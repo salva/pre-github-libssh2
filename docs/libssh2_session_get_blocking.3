@@ -4,6 +4,10 @@ libssh2_session_get_blocking - TODO
 .SH SYNOPSIS
 int libssh2_session_get_blocking(LIBSSH2_SESSION *session);
 .SH DESCRIPTION
+
+This function is deprecated. Use the
+\fIlibssh2_session_config_get(3)\fP function instead!
+
 Returns 0 if the state of the session has previously be set to non-blocking
 and it returns 1 if the state was set to blocking.
 .SH RETURN VALUE

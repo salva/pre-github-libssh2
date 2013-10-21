@@ -5,7 +5,12 @@ libssh2_session_set_timeout - set timeout for blocking functions
 #include <libssh2.h>
 .nf
 void libssh2_session_set_timeout(LIBSSH2_SESSION *session, long timeout);
+
 .SH DESCRIPTION
+
+This function is deprecated. Use the
+\fIlibssh2_session_config_set(3)\fP function instead!
+
 Set the \fBtimeout\fP in milliseconds for how long a blocking the libssh2
 function calls may wait until they consider the situation an error and return
 LIBSSH2_ERROR_TIMEOUT.

@@ -144,7 +144,7 @@ int main(int argc, char *argv[])
         return -1;
 
     /* Since we have set non-blocking, tell libssh2 we are non-blocking */
-    libssh2_session_set_blocking(session, 0);
+    libssh2_session_config_set(session, LIBSSH2_SESSION_CONFIG_BLOCKING, 0);
 
     gettimeofday(&start, NULL);
 

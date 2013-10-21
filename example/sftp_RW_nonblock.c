@@ -133,7 +133,7 @@ int main(int argc, char *argv[])
         return -1;
     }
 
-    libssh2_session_set_blocking(session, 0);
+    libssh2_session_config_set(session, LIBSSH2_SESSION_CONFIG_BLOCKING, 0);
 
     /* At this point we havn't yet authenticated.  The first thing to do
      * is check the hostkey's fingerprint against our known hosts Your app

@@ -137,7 +137,7 @@ int main(int argc, char *argv[])
         return -1;
 
     /* tell libssh2 we want it all done non-blocking */
-    libssh2_session_set_blocking(session, 0);
+    libssh2_session_config_set(session, LIBSSH2_SESSION_CONFIG_BLOCKING, 0);
 
     /* ... start it up. This will trade welcome banners, exchange keys,
      * and setup crypto, compression, and MAC layers

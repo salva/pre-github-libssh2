@@ -162,7 +162,7 @@ int main(int argc, char *argv[])
     }
 
     /* Since we have not set non-blocking, tell libssh2 we are blocking */
-    libssh2_session_set_blocking(session, 1);
+    libssh2_session_config_set(session, LIBSSH2_SESSION_CONFIG_BLOCKING, 1);
 
     fprintf(stderr, "libssh2_sftp_opendir()!\n");
     /* Request a dir listing via SFTP */

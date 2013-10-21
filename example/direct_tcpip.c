@@ -210,7 +210,7 @@ int main(int argc, char *argv[])
     }
 
     /* Must use non-blocking IO hereafter due to the current libssh2 API */
-    libssh2_session_set_blocking(session, 0);
+    libssh2_session_config_set(session, LIBSSH2_SESSION_CONFIG_BLOCKING, 0);
 
     while (1) {
         FD_ZERO(&fds);

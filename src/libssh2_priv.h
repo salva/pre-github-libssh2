@@ -638,6 +638,10 @@ struct _LIBSSH2_SESSION
     void* tracehandler_context; /* context for the trace handler */
 #endif
 
+    /* configured values */
+    unsigned int channel_window_size;
+    unsigned int channel_packet_size;
+
     /* State variables used in libssh2_banner_send() */
     libssh2_nonblocking_states banner_TxRx_state;
     char banner_TxRx_banner[256];

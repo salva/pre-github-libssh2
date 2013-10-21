@@ -172,11 +172,11 @@ packet_queue_listener(LIBSSH2_SESSION * session, unsigned char *data,
 
                     channel->remote.id = listen_state->sender_channel;
                     channel->remote.window_size_initial =
-                        LIBSSH2_CHANNEL_WINDOW_DEFAULT;
+                        session->channel_window_size;
                     channel->remote.window_size =
-                        LIBSSH2_CHANNEL_WINDOW_DEFAULT;
+                        session->channel_window_size;
                     channel->remote.packet_size =
-                        LIBSSH2_CHANNEL_PACKET_DEFAULT;
+                        session->channel_packet_size;
 
                     channel->local.id = _libssh2_channel_nextid(session);
                     channel->local.window_size_initial =
@@ -323,9 +323,11 @@ packet_x11_open(LIBSSH2_SESSION * session, unsigned char *data,
 
             channel->remote.id = x11open_state->sender_channel;
             channel->remote.window_size_initial =
-                LIBSSH2_CHANNEL_WINDOW_DEFAULT;
-            channel->remote.window_size = LIBSSH2_CHANNEL_WINDOW_DEFAULT;
-            channel->remote.packet_size = LIBSSH2_CHANNEL_PACKET_DEFAULT;
+                session->channel_window_size;
+            channel->remote.window_size =
+                session->channel_window_size;
+            channel->remote.packet_size =
+                session->channel_packet_size;
 
             channel->local.id = _libssh2_channel_nextid(session);
             channel->local.window_size_initial =

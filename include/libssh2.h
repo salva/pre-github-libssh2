@@ -594,7 +594,9 @@ LIBSSH2_API int libssh2_poll(LIBSSH2_POLLFD *fds, unsigned int nfds,
 
 /* Channel API */
 #define LIBSSH2_CHANNEL_WINDOW_DEFAULT  (2*1024*1024)
+#define LIBSSH2_CHANNEL_WINDOW_CONFIGURED (~(unsigned int)0)
 #define LIBSSH2_CHANNEL_PACKET_DEFAULT  32768
+#define LIBSSH2_CHANNEL_PACKET_CONFIGURED (~(unsigned int)0)
 #define LIBSSH2_CHANNEL_MINADJUST       1024
 
 /* Extended Data Handling */
@@ -615,8 +617,8 @@ libssh2_channel_open_ex(LIBSSH2_SESSION *session, const char *channel_type,
 
 #define libssh2_channel_open_session(session) \
   libssh2_channel_open_ex((session), "session", sizeof("session") - 1, \
-                          LIBSSH2_CHANNEL_WINDOW_DEFAULT, \
-                          LIBSSH2_CHANNEL_PACKET_DEFAULT, NULL, 0)
+                          LIBSSH2_CHANNEL_WINDOW_CONFIGURED, \
+                          LIBSSH2_CHANNEL_PACKET_CONFIGURED, NULL, 0)
 
 LIBSSH2_API LIBSSH2_CHANNEL *
 libssh2_channel_direct_tcpip_ex(LIBSSH2_SESSION *session, const char *host,

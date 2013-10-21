@@ -154,6 +154,12 @@ _libssh2_channel_open(LIBSSH2_SESSION * session, const char *channel_type,
         memset(&session->open_packet_requirev_state, 0,
                sizeof(session->open_packet_requirev_state));
 
+        if (window_size == LIBSSH2_CHANNEL_WINDOW_CONFIGURED)
+            window_size = session->channel_window_size;
+
+        if (packet_size == LIBSSH2_CHANNEL_PACKET_CONFIGURED)
+            packet_size = session->channel_packet_size;
+
         _libssh2_debug(session, LIBSSH2_TRACE_CONN,
                        "Opening Channel - win %d pack %d", window_size,
                        packet_size);
@@ -375,8 +381,8 @@ channel_direct_tcpip(LIBSSH2_SESSION * session, const char *host,
     channel =
         _libssh2_channel_open(session, "direct-tcpip",
                               sizeof("direct-tcpip") - 1,
-                              LIBSSH2_CHANNEL_WINDOW_DEFAULT,
-                              LIBSSH2_CHANNEL_PACKET_DEFAULT,
+                              session->channel_window_size,
+                              session->channel_packet_size,
                               session->direct_message,
                               session->direct_message_len);
 

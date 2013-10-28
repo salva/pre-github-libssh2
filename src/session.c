@@ -1353,6 +1353,52 @@ libssh2_session_get_timeout(LIBSSH2_SESSION * session)
     return session->api_timeout;
 }
 
+/* libssh2_session_set_channel_window_size
+ *
+ * Sets the default window size for new channels created over the
+ * given session.
+ */
+LIBSSH2_API unsigned long
+libssh2_session_set_channel_window_size(LIBSSH2_SESSION *session,
+                                        unsigned long size)
+{
+    return session->channel_window_size = size;
+}
+
+/* libssh2_session_set_channel_window_size
+ *
+ * Gets the default window size for new channels created over the
+ * given session.
+ */
+LIBSSH2_API unsigned long
+libssh2_session_get_channel_window_size(LIBSSH2_SESSION *session)
+{
+    return session->channel_window_size;
+}
+
+/* libssh2_session_set_channel_packet_size
+ *
+ * Sets the default maximum packet size for channels created over the
+ * given session.
+ */
+LIBSSH2_API unsigned long
+libssh2_session_set_channel_packet_size(LIBSSH2_SESSION *session,
+                                        unsigned long size)
+{
+    return session->channel_packet_size = size;
+}
+
+/* libssh2_session_set_channel_packet_size
+ *
+ * Gets the default maximum packet size for channels created over the
+ * given session.
+ */
+LIBSSH2_API unsigned long
+libssh2_session_get_channel_packet_size(LIBSSH2_SESSION *session)
+{
+    return session->channel_packet_size;
+}
+
 /*
  * libssh2_poll_channel_read
  *

@@ -1,0 +1,24 @@
+.TH libssh2_session_get_channel_packet_size 3 "28 Oct 2013" "libssh2 1.4.4" "libssh2 manual"
+.SH NAME
+libssh2_session_get_channel_packet_size - get default channel packet size for new channels
+.SH SYNOPSIS
+#include <libssh2.h>
+
+unsigned long
+libssh2_session_get_channel_packet_size(LIBSSH2_SESSION *session);
+
+.SH DESCRIPTION
+This function returns the maximum packet size used as the default when
+new channels created over the given session are initialized.
+
+.SH RETURN VALUE
+Returns the current default maximum packet size.
+
+.SH AVAILABILITY
+This function has been available since version 1.4.4.
+
+.SH SEE ALSO
+
+.BR libssh2_session_set_channel_packet_size(3)
+
+RFC 4253, chapter 6.1.

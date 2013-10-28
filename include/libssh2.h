@@ -748,6 +748,17 @@ LIBSSH2_API void libssh2_channel_set_blocking(LIBSSH2_CHANNEL *channel,
 LIBSSH2_API void libssh2_session_set_timeout(LIBSSH2_SESSION* session,
                                              long timeout);
 LIBSSH2_API long libssh2_session_get_timeout(LIBSSH2_SESSION* session);
+  
+LIBSSH2_API unsigned long
+libssh2_session_set_channel_window_size(LIBSSH2_SESSION *session,
+                                        unsigned long size);
+LIBSSH2_API unsigned long
+libssh2_session_get_channel_window_size(LIBSSH2_SESSION *session);
+LIBSSH2_API unsigned long
+libssh2_session_set_channel_packet_size(LIBSSH2_SESSION *session,
+                                        unsigned long size);
+LIBSSH2_API unsigned long
+libssh2_session_get_channel_packet_size(LIBSSH2_SESSION *session);
 
 /* libssh2_channel_handle_extended_data is DEPRECATED, do not use! */
 LIBSSH2_API void libssh2_channel_handle_extended_data(LIBSSH2_CHANNEL *channel,

@@ -101,6 +101,8 @@ dist_man_MANS = \
 	libssh2_session_flag.3 \
 	libssh2_session_free.3 \
 	libssh2_session_get_blocking.3 \
+	libssh2_session_get_channel_packet_size.3 \
+	libssh2_session_get_channel_window_size.3 \
 	libssh2_session_get_timeout.3 \
 	libssh2_session_hostkey.3 \
 	libssh2_session_init.3 \
@@ -110,6 +112,8 @@ dist_man_MANS = \
 	libssh2_session_method_pref.3 \
 	libssh2_session_methods.3 \
 	libssh2_session_set_blocking.3 \
+	libssh2_session_set_channel_packet_size.3 \
+	libssh2_session_set_channel_window_size.3 \
 	libssh2_session_set_timeout.3 \
 	libssh2_session_startup.3 \
 	libssh2_session_supported_algs.3 \
